@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Signup</title>
+</head>
+<body>
+    <h1>Login / Signup?</h1>
+    <div>
+        <h2>SIGN UP</h2>
+        <input id="signupUsername" type="text" placeholder="Username">
+        <input id="signupPassword" type="password" placeholder="Password">
+        <input id="signupConfirmPassword" type="password" placeholder="Confirm Password">
+        <button onclick="signup()">SIGN UP</button>
+    </div>
+    <div>
+        <h2>LOGIN</h2>
+        <input id="loginUsername" type="text" placeholder="Username">
+        <input id="loginPassword" type="password" placeholder="Password">
+        <button onclick="login()">LOGIN</button>
+    </div>
+    <div id="output"></div>
+
+    <script>
+        async function signup() {
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            if (!username || !password || !confirmPassword) {
+                alert('All fields are mandatory');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+
+            const response = await fetch('http://localhost:8000/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password,confirmPassword })
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+            alert('User created successfully');
+            document.getElementById('output').innerHTML = 'Hello World! '.repeat(50);
+            } 
+            else {
+            alert('Signup error: ' + data.message);
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const response = await fetch('http://localhost:8000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            if (data.token) {
+                document.getElementById('output').innerHTML = 'Hello World! '.repeat(50);
+            } else {
+                alert('Login error: ' + data.message);
+            }
+            
+        }
+    </script>
+</body>
+</html>
